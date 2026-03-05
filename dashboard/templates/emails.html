@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>Scanned emails</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Scanned at</th>
+        <th>Sender</th>
+        <th>Subject</th>
+        <th>Risk</th>
+        <th>Probability</th>
+        <th>SPF</th>
+        <th>DKIM</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in items %}
+      <tr>
+        <td>{{ row.scanned_at }}</td>
+        <td>{{ row.sender }}</td>
+        <td>{{ row.subject }}</td>
+        <td>{{ row.risk_level }}</td>
+        <td>{{ "%.2f"|format(row.phishing_probability) }}</td>
+        <td>{{ row.spf_status }}</td>
+        <td>{{ row.dkim_status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    {% if page > 1 %}
+      <a href="{{ url_for('emails', page=page-1) }}">Previous</a>
+    {% endif %}
+    <span>Page {{ page }} / {{ total_pages }}</span>
+    {% if page < total_pages %}
+      <a href="{{ url_for('emails', page=page+1) }}">Next</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+

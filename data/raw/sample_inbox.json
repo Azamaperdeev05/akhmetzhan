@@ -1,0 +1,25 @@
+[
+  {
+    "message_id": "sample-001",
+    "thread_id": "thread-1",
+    "subject": "Security alert: verify account",
+    "sender": "IT Support <security@example.com>",
+    "body": "We detected unusual login. Verify now at http://bit.ly/company-verify",
+    "headers": {
+      "From": "IT Support <security@example.com>",
+      "Authentication-Results": "mx.google.com; spf=fail; dkim=fail"
+    }
+  },
+  {
+    "message_id": "sample-002",
+    "thread_id": "thread-2",
+    "subject": "Sprint planning notes",
+    "sender": "Product Team <product@example.com>",
+    "body": "Attached agenda for tomorrow's planning meeting.",
+    "headers": {
+      "From": "Product Team <product@example.com>",
+      "Authentication-Results": "mx.google.com; spf=pass; dkim=pass"
+    }
+  }
+]
+

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="cards">
+  <article class="card">
+    <h3>Total scans</h3>
+    <p>{{ summary.total_scans }}</p>
+  </article>
+  <article class="card">
+    <h3>Phishing detected</h3>
+    <p>{{ summary.phishing_count }}</p>
+  </article>
+  <article class="card">
+    <h3>Last {{ summary.window_days }} days</h3>
+    <p>{{ summary.recent_phishing }}/{{ summary.recent_total }}</p>
+  </article>
+  <article class="card">
+    <h3>Phishing ratio</h3>
+    <p>{{ "%.1f"|format(summary.phishing_ratio * 100) }}%</p>
+  </article>
+</section>
+
+<section class="panel">
+  <h2>Recent scans</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Sender</th>
+        <th>Subject</th>
+        <th>Probability</th>
+        <th>Label</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in recent %}
+      <tr>
+        <td>{{ row.scanned_at }}</td>
+        <td>{{ row.sender }}</td>
+        <td>{{ row.subject }}</td>
+        <td>{{ "%.2f"|format(row.phishing_probability) }}</td>
+        <td>
+          <span class="badge {{ row.label|lower }}">{{ row.label }}</span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
+

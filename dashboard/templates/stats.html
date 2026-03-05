@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>Statistics ({{ summary.window_days }} days)</h2>
+  <canvas id="daily-chart" height="110"></canvas>
+</section>
+
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+  window.renderDailyChart({{ daily | tojson }});
+</script>
+{% endblock %}
+
