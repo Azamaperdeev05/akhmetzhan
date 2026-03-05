@@ -103,6 +103,22 @@ phishguard/
 
 ---
 
+## 📚 Құжаттама
+
+Жобаның толық техникалық құжаттамасы `docs/` ішінде:
+
+- [docs/README.md](docs/README.md) — жалпы индекс
+- [docs/01-project-status.md](docs/01-project-status.md) — орындалған жұмыстар статусы
+- [docs/02-setup-and-runbook.md](docs/02-setup-and-runbook.md) — орнату және іске қосу
+- [docs/03-architecture.md](docs/03-architecture.md) — архитектура
+- [docs/04-interfaces-and-reference.md](docs/04-interfaces-and-reference.md) — интерфейс анықтамалары
+- [docs/05-testing-and-metrics.md](docs/05-testing-and-metrics.md) — тест және метрикалар
+- [docs/06-troubleshooting.md](docs/06-troubleshooting.md) — қателерді түзету нұсқаулығы
+- [docs/07-git-guide.md](docs/07-git-guide.md) — Git workflow
+- [docs/08-diploma-deliverables.md](docs/08-diploma-deliverables.md) — қорғау чеклисті
+
+---
+
 ## 🛠️ Технологиялар стегі
 
 ### 🤖 Машиналық оқыту және NLP
