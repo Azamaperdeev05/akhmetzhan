@@ -48,6 +48,12 @@
 - Label management (`gmail/label_manager.py`).
 - `main.py` ішінде retry/backoff және dedup логикасы бар.
 - Gmail unavailable кезінде offline sample fallback бар.
+- Қосымша күшейту жасалды:
+  - paginated fetch + batch dedup (`gmail/fetch_emails.py`)
+  - transient-only retry стратегиясы (`main.py`)
+  - label apply fail кезінде scan cycle үзілмейді (`main.py`)
+  - phase3 runtime тесттері (`tests/test_phase3_gmail_runtime.py`)
+  - real inbox 20+ хат валидация скрипті (`scripts/run_phase3_gmail_validation.py`)
 
 ## Фаза 4: Dashboard + E2E
 
@@ -69,10 +75,11 @@
 
 ## Тексерілген нақты нәтижелер
 
-- `python -m pytest tests -q` -> `9 passed`.
+- `python -m pytest tests -q` -> `13 passed`.
 - `python main.py --once` -> scan cycle done (offline sample mode).
 - Dashboard endpoints -> `200 OK`.
 - Phase 2 smoke script -> `processed_emails=2`, `phishing_detected=1`, DB summary generated.
+- Phase 3 runtime tests -> retry/pagination/label-failure сценарийлері passed.
 
 ## Ескерту (ғылыми метрика туралы)
 

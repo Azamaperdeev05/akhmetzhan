@@ -108,16 +108,40 @@ def fetch_recent_emails(
 ) -> list[EmailMessage]:
     if seen_ids is None:
         seen_ids = set()
-    response = (
-        service.users()
-        .messages()
-        .list(userId="me", q=query, maxResults=max_results)
-        .execute()
-    )
-    message_refs = response.get("messages", [])
+    if max_results <= 0:
+        return []
+
+    message_refs: list[dict] = []
+    page_token: str | None = None
+    while len(message_refs) < max_results:
+        request = service.users().messages().list(
+            userId="me",
+            q=query,
+            maxResults=min(max_results, 100),
+            pageToken=page_token,
+        )
+        response = request.execute()
+        page_refs = response.get("messages", [])
+        if page_refs:
+            message_refs.extend(page_refs)
+
+        page_token = response.get("nextPageToken")
+        if not page_token or not page_refs:
+            break
+
+    unique_refs: list[dict] = []
+    seen_in_batch: set[str] = set()
+    for ref in message_refs:
+        message_id = ref.get("id", "")
+        if not message_id or message_id in seen_in_batch:
+            continue
+        seen_in_batch.add(message_id)
+        unique_refs.append(ref)
+        if len(unique_refs) >= max_results:
+            break
 
     parsed: list[EmailMessage] = []
-    for reference in message_refs:
+    for reference in unique_refs:
         message_id = reference.get("id", "")
         if not message_id or message_id in seen_ids:
             continue

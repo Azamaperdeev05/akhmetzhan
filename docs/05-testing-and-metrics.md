@@ -25,7 +25,7 @@ python -m pytest tests -q
 
 Соңғы орындалған нәтиже:
 
-- `8 passed`
+- `13 passed`
 
 ## Метрика артефакттары
 
@@ -51,4 +51,3 @@ python -m pytest tests -q
 2. `main.py --once` scan cycle толық өтеді.
 3. Dashboard барлық endpoint `200`.
 4. `evaluation_report.json` ішінде threshold sweep бар.
-

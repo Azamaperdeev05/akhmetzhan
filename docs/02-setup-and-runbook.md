@@ -123,3 +123,19 @@ python scripts/run_phase2_sample.py --predictor-mode heuristic
 ```bash
 python scripts/run_phase2_sample.py --db-url sqlite:///phase2_demo.db
 ```
+
+## 10. Phase 3 Gmail validation (real inbox)
+
+Бұл қадам Gmail OAuth (`credentials.json`) дайын болғанда орындалады.
+
+Кемінде 20 хат өңдеу валидациясы:
+
+```bash
+python scripts/run_phase3_gmail_validation.py --target-count 20 --max-cycles 10 --max-results 20
+```
+
+Нәтиже JSON өрістері:
+
+- `scanned_total`
+- `phishing_total`
+- `target_reached`

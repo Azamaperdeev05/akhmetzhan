@@ -27,17 +27,50 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+RETRYABLE_HTTP_STATUS = {408, 409, 425, 429, 500, 502, 503, 504}
+
+
+def is_retryable_error(exc: Exception) -> bool:
+    status = getattr(exc, "status_code", None)
+    if status is None and hasattr(exc, "resp"):
+        status = getattr(exc.resp, "status", None)
+
+    if status is not None:
+        try:
+            return int(status) in RETRYABLE_HTTP_STATUS
+        except (TypeError, ValueError):
+            return False
+
+    if isinstance(exc, (TimeoutError, ConnectionError)):
+        return True
+
+    lowered = str(exc).lower()
+    return any(
+        token in lowered
+        for token in (
+            "timed out",
+            "temporarily unavailable",
+            "rate limit",
+            "connection reset",
+            "503",
+            "429",
+        )
+    )
+
+
 def run_with_retry(logger, fn, retries: int = 3, base_delay: float = 1.5):
     for attempt in range(1, retries + 1):
         try:
             return fn()
         except Exception as exc:
-            if attempt == retries:
+            retryable = is_retryable_error(exc)
+            if (not retryable) or attempt == retries:
                 raise
             delay = base_delay * (2 ** (attempt - 1))
             logger.warning(
-                "retryable_error=%s attempt=%s/%s next_delay_sec=%.1f",
+                "retryable_error=%s retryable=%s attempt=%s/%s next_delay_sec=%.1f",
                 exc,
+                retryable,
                 attempt,
                 retries,
                 delay,
@@ -59,7 +92,7 @@ def scan_once(
     run_id = db.start_scan_run()
     scanned_count = 0
     phishing_count = 0
-    notes = ""
+    label_failure_count = 0
 
     if service is None:
         logger.warning("gmail_service=unavailable using_sample_emails=%s", sample_path)
@@ -87,15 +120,19 @@ def scan_once(
         if result.phishing_probability > settings.phishing_threshold:
             phishing_count += 1
             if service is not None:
-                run_with_retry(
-                    logger,
-                    lambda: mark_as_phishing(
-                        service=service,
-                        message_id=email.message_id,
-                        label_name=settings.gmail_label_name,
-                    ),
-                    retries=3,
-                )
+                try:
+                    run_with_retry(
+                        logger,
+                        lambda: mark_as_phishing(
+                            service=service,
+                            message_id=email.message_id,
+                            label_name=settings.gmail_label_name,
+                        ),
+                        retries=3,
+                    )
+                except Exception as exc:
+                    label_failure_count += 1
+                    logger.error("label_apply_failed message_id=%s error=%s", email.message_id, exc)
 
         logger.info(
             "scan_result message_id=%s probability=%.4f label=%s risk=%s",
@@ -105,6 +142,12 @@ def scan_once(
             result.risk_level,
         )
 
+    notes = (
+        f"emails_fetched={len(emails)} "
+        f"emails_scanned={scanned_count} "
+        f"phishing_detected={phishing_count} "
+        f"label_failures={label_failure_count}"
+    )
     db.finish_scan_run(
         run_id=run_id,
         scanned_count=scanned_count,
@@ -173,4 +216,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
