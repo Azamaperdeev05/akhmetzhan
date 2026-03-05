@@ -37,6 +37,9 @@
   - `scan_runs`
   - `scan_results`
   - `url_findings`
+- Интеграция бекітілді:
+  - `tests/test_phase2_pipeline_db.py` (pipeline -> DB integration test)
+  - `scripts/run_phase2_sample.py` (sample хаттарды базаға жазу smoke script)
 
 ## Фаза 3: Gmail интеграциясы
 
@@ -66,12 +69,12 @@
 
 ## Тексерілген нақты нәтижелер
 
-- `python -m pytest tests -q` -> `8 passed`.
+- `python -m pytest tests -q` -> `9 passed`.
 - `python main.py --once` -> scan cycle done (offline sample mode).
 - Dashboard endpoints -> `200 OK`.
+- Phase 2 smoke script -> `processed_emails=2`, `phishing_detected=1`, DB summary generated.
 
 ## Ескерту (ғылыми метрика туралы)
 
 Ағымдағы метрикалар шағын демо датасетпен алынған.  
 Дипломдық қорытынды метрика үшін Kaggle толық датасетпен қайта үйрету қажет.
-

@@ -109,3 +109,17 @@ python dashboard/app.py
 ```bash
 python -m pytest tests -q
 ```
+
+## 9. Phase 2 smoke (Analyzer + DB)
+
+Sample хаттарды pipeline арқылы өткізіп, нәтижені SQLite-ке жазу:
+
+```bash
+python scripts/run_phase2_sample.py --predictor-mode heuristic
+```
+
+Қажет болса басқа DB:
+
+```bash
+python scripts/run_phase2_sample.py --db-url sqlite:///phase2_demo.db
+```
