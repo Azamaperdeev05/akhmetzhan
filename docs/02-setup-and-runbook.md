@@ -162,3 +162,25 @@ Dashboard арқылы:
 - `SCAN_INTERVAL_MINUTES`
 
 Бұл мәндер `.env` файлына жазылады.
+
+## 13. Phase 5 quality gate
+
+```bash
+python scripts/run_phase5_quality_gate.py
+```
+
+Нәтиже:
+
+- `reports/phase5_quality_gate.json`
+
+## 14. Phase 5 defense report генерациясы
+
+```bash
+python scripts/generate_phase5_defense_report.py
+```
+
+Нәтиже:
+
+- `docs/09-phase5-quality-and-defense.md`
+- `reports/phase5_defense_summary.json`
+- `reports/phase5_metrics_table.csv`

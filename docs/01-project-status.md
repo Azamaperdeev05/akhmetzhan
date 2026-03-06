@@ -1,6 +1,6 @@
 # Project Status (Implemented Scope)
 
-Жаңарту күні: 2026-03-05
+Жаңарту күні: 2026-03-06
 
 ## Жалпы күй
 
@@ -78,15 +78,24 @@
 - Артефакт файлдары generated:
   - `model/saved_model/train_summary.json`
   - `model/saved_model/evaluation_report.json`
+- Қосымша automation:
+  - `scripts/run_phase5_quality_gate.py` (single-command quality checks)
+  - `scripts/generate_phase5_defense_report.py` (defense docs + metrics artifacts)
+  - generated outputs:
+    - `reports/phase5_quality_gate.json`
+    - `reports/phase5_defense_summary.json`
+    - `reports/phase5_metrics_table.csv`
+    - `docs/09-phase5-quality-and-defense.md`
 
 ## Тексерілген нақты нәтижелер
 
-- `python -m pytest tests -q` -> `13 passed`.
+- `python -m pytest tests -q` -> `15 passed`.
 - `python main.py --once` -> scan cycle done (offline sample mode).
 - Dashboard endpoints -> `200 OK`.
 - Phase 2 smoke script -> `processed_emails=2`, `phishing_detected=1`, DB summary generated.
 - Phase 3 runtime tests -> retry/pagination/label-failure сценарийлері passed.
 - Phase 4 tests -> scan->db->dashboard routes және settings env update passed.
+- Phase 5 quality gate and defense report generation -> passed.
 
 ## Ескерту (ғылыми метрика туралы)
 

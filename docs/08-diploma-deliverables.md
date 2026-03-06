@@ -2,29 +2,29 @@
 
 ## 1. Код және жүйе
 
-- [ ] `main.py` арқылы scanner demo.
-- [ ] Dashboard (`/`, `/emails`, `/stats`) live көрсетілім.
-- [ ] Gmail label қою (real OAuth mode).
+- [x] `main.py` арқылы scanner demo.
+- [x] Dashboard (`/`, `/emails`, `/stats`) live көрсетілім.
+- [ ] Gmail label қою (real OAuth mode, OAuth рұқсат толық аяқталуы керек).
 
 ## 2. ML нәтижелері
 
-- [ ] Full dataset preprocess есебі.
-- [ ] Final training config (seed, epochs, batch, lr).
-- [ ] Final metrics: Accuracy, Precision, Recall, F1, AUC, latency.
-- [ ] Confusion matrix және threshold selection rationale.
+- [ ] Full dataset preprocess есебі (Kaggle толық run pending).
+- [x] Final training config (seed, epochs, batch, lr).
+- [x] Final metrics: Accuracy, Precision, Recall, F1, AUC, latency.
+- [x] Confusion matrix және threshold selection rationale (threshold sweep арқылы).
 
 ## 3. Техникалық құжаттама
 
-- [ ] README актуал.
-- [ ] `docs/` толық және консистентті.
-- [ ] `.env.example` барлық керек айнымалылармен.
+- [x] README актуал.
+- [x] `docs/` толық және консистентті.
+- [x] `.env.example` барлық керек айнымалылармен.
 
 ## 4. Диплом мәтініне керек материалдар
 
-- [ ] Архитектура диаграммасы.
-- [ ] DB schema сипаттамасы.
-- [ ] Pipeline блок-схемасы.
-- [ ] Тест кестелері және қорытынды талдау.
+- [x] Архитектура диаграммасы.
+- [x] DB schema сипаттамасы.
+- [x] Pipeline блок-схемасы.
+- [x] Тест кестелері және қорытынды талдау.
 
 ## 5. Қорғау сценарийі (ұсыныс)
 
@@ -36,4 +36,3 @@
    - dashboard refresh
 4. Метрика және салыстыру (2-3 мин).
 5. Қорытынды және future work (1 мин).
-

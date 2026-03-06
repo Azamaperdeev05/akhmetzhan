@@ -1,0 +1,7 @@
+metric,actual,target,passed
+accuracy,0.3333333333333333,0.97,False
+precision,0.3333333333333333,0.96,False
+recall,1.0,0.97,True
+f1,0.5,0.965,False
+auc_roc,1.0,0.99,True
+latency_per_email_ms,76.25553333491553,500.0,True

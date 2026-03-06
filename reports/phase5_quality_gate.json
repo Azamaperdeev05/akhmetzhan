@@ -1,0 +1,64 @@
+{
+  "generated_at_utc": "2026-03-06T05:29:25.345498+00:00",
+  "workspace": "C:\\Users\\Acer\\Desktop\\\u0410\u0445\u043c\u0435\u0442\u0436\u0430\u043d",
+  "overall_passed": true,
+  "checks": [
+    {
+      "name": "pytest",
+      "passed": true,
+      "returncode": 0,
+      "command": "C:\\Users\\Acer\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe -m pytest tests -q",
+      "summary": "15 passed in 7.21s",
+      "passed_count": 15
+    },
+    {
+      "name": "phase2_smoke",
+      "passed": true,
+      "returncode": 0,
+      "command": "C:\\Users\\Acer\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe scripts/run_phase2_sample.py --predictor-mode heuristic --db-url sqlite:///reports/phase2_quality_78b2f5a8.db",
+      "details": {
+        "database_url": "sqlite:///reports/phase2_quality_78b2f5a8.db",
+        "predictor_backend": "heuristic",
+        "processed_emails": 2,
+        "phishing_detected": 1,
+        "summary": {
+          "total_scans": 2,
+          "phishing_count": 1,
+          "phishing_ratio": 0.5,
+          "recent_total": 2,
+          "recent_phishing": 1,
+          "recent_ratio": 0.5,
+          "window_days": 30
+        }
+      }
+    },
+    {
+      "name": "phase4_e2e",
+      "passed": true,
+      "returncode": 0,
+      "command": "C:\\Users\\Acer\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\python.exe scripts/run_phase4_e2e_demo.py --db-url sqlite:///reports/phase4_quality_78b2f5a8.db",
+      "details": {
+        "database_url": "sqlite:///reports/phase4_quality_78b2f5a8.db",
+        "emails_scanned": 2,
+        "phishing_detected": 1,
+        "dashboard_statuses": {
+          "/": 200,
+          "/emails": 200,
+          "/stats": 200,
+          "/api/stats": 200,
+          "/settings": 200
+        },
+        "all_dashboard_endpoints_ok": true,
+        "summary": {
+          "total_scans": 2,
+          "phishing_count": 1,
+          "phishing_ratio": 0.5,
+          "recent_total": 2,
+          "recent_phishing": 1,
+          "recent_ratio": 0.5,
+          "window_days": 30
+        }
+      }
+    }
+  ]
+}

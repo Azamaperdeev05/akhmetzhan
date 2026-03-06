@@ -20,6 +20,8 @@
    Git-ке инициализациялау, commit/push, PR workflow.
 8. [08-diploma-deliverables.md](08-diploma-deliverables.md)  
    Диплом қорғауға дайын материалдар чеклисті.
+9. [09-phase5-quality-and-defense.md](09-phase5-quality-and-defense.md)  
+   Phase 5 финал сапа есебі және қорғау сценариі.
 
 ## Жылдам бастау
 
@@ -32,4 +34,3 @@ python model/evaluate.py --mode baseline
 python main.py --once
 python dashboard/app.py
 ```
-

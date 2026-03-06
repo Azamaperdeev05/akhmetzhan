@@ -16,6 +16,16 @@
   - Gmail message parsing
   - dedup fetch behavior
   - label apply flow
+- `test_phase2_pipeline_db.py`
+  - analyzer->DB integration
+  - scan_runs/scan_results write validation
+- `test_phase3_gmail_runtime.py`
+  - retry strategy behavior
+  - pagination/dedup runtime behavior
+  - label apply failure resilience
+- `test_phase4_dashboard_e2e.py`
+  - scan->db->dashboard E2E flow
+  - settings update persistence
 
 ## Іске қосу
 
@@ -35,6 +45,12 @@ python -m pytest tests -q
 - `bert_val_metrics.json`
 - `train_summary.json`
 - `evaluation_report.json`
+
+Phase 5 quality/report артефакттары (орны: `reports/`):
+
+- `phase5_quality_gate.json`
+- `phase5_defense_summary.json`
+- `phase5_metrics_table.csv`
 
 ## Қазіргі алынған мәндер туралы ескерту
 
