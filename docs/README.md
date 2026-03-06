@@ -22,6 +22,8 @@
    Диплом қорғауға дайын материалдар чеклисті.
 9. [09-phase5-quality-and-defense.md](09-phase5-quality-and-defense.md)  
    Phase 5 финал сапа есебі және қорғау сценариі.
+10. [10-defense-presentation-script.md](10-defense-presentation-script.md)  
+   5-7 минуттық қорғау сөзі, live demo реті, және Q&A шпаргалка.
 
 ## Жылдам бастау
 
