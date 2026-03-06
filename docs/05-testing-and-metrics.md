@@ -35,7 +35,7 @@ python -m pytest tests -q
 
 Соңғы орындалған нәтиже:
 
-- `15 passed`
+- `16 passed`
 
 ## Метрика артефакттары
 

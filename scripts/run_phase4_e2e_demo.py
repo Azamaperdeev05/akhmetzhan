@@ -43,7 +43,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     os.environ["DATABASE_URL"] = args.db_url
-    reload_settings()
+    settings = reload_settings()
 
     db = Database(args.db_url)
     predictor = PhishingPredictor(mode="heuristic", threshold=args.threshold)
@@ -68,6 +68,15 @@ def main() -> None:
 
     app = create_app()
     client = app.test_client()
+    login_response = client.post(
+        "/login",
+        data={
+            "username": settings.dashboard_username,
+            "password": settings.dashboard_password,
+        },
+        follow_redirects=False,
+    )
+
     endpoints = ["/", "/emails", "/stats", "/api/stats", "/settings"]
     statuses = {endpoint: client.get(endpoint).status_code for endpoint in endpoints}
 
@@ -75,8 +84,10 @@ def main() -> None:
         "database_url": args.db_url,
         "emails_scanned": len(emails),
         "phishing_detected": phishing_count,
+        "login_status": login_response.status_code,
         "dashboard_statuses": statuses,
-        "all_dashboard_endpoints_ok": all(status == 200 for status in statuses.values()),
+        "all_dashboard_endpoints_ok": all(status == 200 for status in statuses.values())
+        and login_response.status_code in {302, 303},
         "summary": db.get_summary(days=30),
     }
     print(json.dumps(payload, ensure_ascii=True, indent=2))
@@ -84,4 +95,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

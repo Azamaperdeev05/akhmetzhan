@@ -68,9 +68,14 @@
   - `/emails`
   - `/stats`
   - `/api/stats`
+- Авторизация қосылды:
+  - `/login`
+  - `/logout`
+  - қорғалған беттерге тек логин арқылы кіру
 - Runtime баптау беті қосылды:
   - `/settings` (`PHISHING_THRESHOLD`, `SCAN_INTERVAL_MINUTES`)
-- Template + static assets жасалды.
+- Интерфейс толық қазақшаға аударылды.
+- Template + static assets жаңа дизайнмен жаңартылды.
 - Main scanner DB-ға жазады, dashboard DB-дан оқиды.
 - Phase 4 E2E demo script қосылды:
   - `scripts/run_phase4_e2e_demo.py`
@@ -95,7 +100,7 @@
 
 ## Тексерілген нақты нәтижелер
 
-- `python -m pytest tests -q` -> `15 passed`.
+- `python -m pytest tests -q` -> `16 passed`.
 - `python main.py --once` -> scan cycle done (offline sample mode).
 - Dashboard endpoints -> `200 OK`.
 - Phase 2 smoke script -> `processed_emails=2`, `phishing_detected=1`, DB summary generated.

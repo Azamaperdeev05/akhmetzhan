@@ -39,6 +39,8 @@ class Settings:
     scan_interval_minutes: int
     phishing_threshold: float
     flask_secret_key: str
+    dashboard_username: str
+    dashboard_password: str
     gmail_client_id: str | None
     gmail_client_secret: str | None
     gmail_redirect_uri: str | None
@@ -61,6 +63,8 @@ def get_settings() -> Settings:
         scan_interval_minutes=_as_int(os.getenv("SCAN_INTERVAL_MINUTES"), 5),
         phishing_threshold=_as_float(os.getenv("PHISHING_THRESHOLD"), 0.75),
         flask_secret_key=os.getenv("FLASK_SECRET_KEY", "change-me"),
+        dashboard_username=os.getenv("DASHBOARD_USERNAME", "admin"),
+        dashboard_password=os.getenv("DASHBOARD_PASSWORD", "admin12345"),
         gmail_client_id=os.getenv("GMAIL_CLIENT_ID"),
         gmail_client_secret=os.getenv("GMAIL_CLIENT_SECRET"),
         gmail_redirect_uri=os.getenv("GMAIL_REDIRECT_URI"),

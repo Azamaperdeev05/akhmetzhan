@@ -104,6 +104,15 @@ python dashboard/app.py
 
 Ашу: `http://localhost:5000`
 
+Dashboard авторизациясы:
+
+- Логин беті: `http://localhost:5000/login`
+- Әдепкі логин: `admin`
+- Әдепкі құпиясөз: `admin12345`
+- Өзгерту үшін `.env`:
+  - `DASHBOARD_USERNAME=...`
+  - `DASHBOARD_PASSWORD=...`
+
 ## 8. Тесттер
 
 ```bash

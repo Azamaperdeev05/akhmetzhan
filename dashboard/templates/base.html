@@ -1,25 +1,40 @@
 <!doctype html>
-<html lang="en">
+<html lang="kk">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PhishGuard Dashboard</title>
+  <title>PhishGuard Басқару Панелі</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
-<body>
+<body class="{% block body_class %}app-body{% endblock %}">
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-grid"></div>
   <header class="topbar">
     <div class="container nav">
-      <h1>PhishGuard</h1>
-      <nav>
-        <a href="{{ url_for('index') }}">Overview</a>
-        <a href="{{ url_for('emails') }}">Emails</a>
-        <a href="{{ url_for('stats') }}">Stats</a>
-        <a href="{{ url_for('settings_page') }}">Settings</a>
+      <a class="brand" href="{{ url_for('index') if is_authenticated else url_for('login') }}">
+        <span class="brand-dot"></span>
+        <span>PhishGuard</span>
+      </a>
+      {% if is_authenticated %}
+      <nav class="nav-links">
+        <a href="{{ url_for('index') }}">Шолу</a>
+        <a href="{{ url_for('emails') }}">Хаттар</a>
+        <a href="{{ url_for('stats') }}">Статистика</a>
+        <a href="{{ url_for('settings_page') }}">Баптаулар</a>
       </nav>
+      <div class="nav-user">
+        <span class="user-pill">{{ current_user }}</span>
+        <a class="logout-link" href="{{ url_for('logout') }}">Шығу</a>
+      </div>
+      {% endif %}
     </div>
   </header>
-  <main class="container">
+  <main class="container app-main">
     {% block content %}{% endblock %}
   </main>
 </body>

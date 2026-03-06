@@ -14,20 +14,22 @@ window.renderDailyChart = function renderDailyChart(points) {
       labels: labels,
       datasets: [
         {
-          label: "Total scanned",
+          label: "Барлық скан",
           data: total,
-          borderColor: "#2470dc",
-          backgroundColor: "rgba(36, 112, 220, 0.15)",
+          borderColor: "#24c5ff",
+          backgroundColor: "rgba(36, 197, 255, 0.2)",
           fill: true,
-          tension: 0.3,
+          tension: 0.35,
+          pointRadius: 2,
         },
         {
-          label: "Phishing",
+          label: "Фишинг",
           data: phishing,
-          borderColor: "#ce3f29",
-          backgroundColor: "rgba(206, 63, 41, 0.15)",
+          borderColor: "#ff5d5d",
+          backgroundColor: "rgba(255, 93, 93, 0.2)",
           fill: true,
-          tension: 0.3,
+          tension: 0.35,
+          pointRadius: 2,
         },
       ],
     },
@@ -41,9 +43,16 @@ window.renderDailyChart = function renderDailyChart(points) {
         y: {
           beginAtZero: true,
           ticks: { precision: 0 },
+          grid: {
+            color: "rgba(255,255,255,0.08)",
+          },
+        },
+        x: {
+          grid: {
+            color: "rgba(255,255,255,0.04)",
+          },
         },
       },
     },
   });
 };
-

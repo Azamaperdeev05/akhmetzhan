@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="panel">
-  <h2>Runtime Settings</h2>
-  <p>These values are stored in <code>.env</code> and used by scanner runs.</p>
+  <h2>Жүйе баптаулары</h2>
+  <p>Бұл мәндер <code>.env</code> файлына жазылып, сканер жұмысына тікелей әсер етеді.</p>
 
   {% if saved %}
-    <p class="status-ok">Settings saved successfully.</p>
+    <p class="status-ok">Баптаулар сәтті сақталды.</p>
   {% endif %}
   {% if error %}
     <p class="status-error">{{ error }}</p>
   {% endif %}
 
   <form method="post" class="settings-form">
-    <label for="phishing_threshold">PHISHING_THRESHOLD (0..1)</label>
+    <label for="phishing_threshold">PHISHING_THRESHOLD (0..1 аралығы)</label>
     <input
       id="phishing_threshold"
       name="phishing_threshold"
@@ -24,7 +24,7 @@
       required
     />
 
-    <label for="scan_interval_minutes">SCAN_INTERVAL_MINUTES (1..1440)</label>
+    <label for="scan_interval_minutes">SCAN_INTERVAL_MINUTES (1..1440 минут)</label>
     <input
       id="scan_interval_minutes"
       name="scan_interval_minutes"
@@ -36,8 +36,7 @@
       required
     />
 
-    <button type="submit">Save</button>
+    <button type="submit">Сақтау</button>
   </form>
 </section>
 {% endblock %}
-

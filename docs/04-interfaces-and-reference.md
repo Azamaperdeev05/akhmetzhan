@@ -78,6 +78,10 @@
 
 ## HTTP interfaces (Dashboard)
 
+- `GET /login`, `POST /login`  
+  Dashboard-қа логин/құпиясөз арқылы кіру.
+- `GET /logout`  
+  Сессиядан шығу.
 - `GET /`  
   Overview + recent scans.
 - `GET /emails?page=N`  
@@ -97,4 +101,3 @@
   - per-email classification output
 - `url_findings`
   - per-URL suspicious findings
-

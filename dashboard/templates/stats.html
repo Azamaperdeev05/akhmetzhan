@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="panel">
-  <h2>Statistics ({{ summary.window_days }} days)</h2>
+  <h2>Соңғы {{ summary.window_days }} күн статистикасы</h2>
   <canvas id="daily-chart" height="110"></canvas>
 </section>
 
@@ -10,4 +10,3 @@
   window.renderDailyChart({{ daily | tojson }});
 </script>
 {% endblock %}
-

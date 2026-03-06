@@ -21,7 +21,7 @@ def test_phase4_e2e_scan_to_dashboard(monkeypatch, tmp_path: Path) -> None:
     db_path = tmp_path / "phase4.sqlite3"
     db_url = f"sqlite:///{db_path}"
     monkeypatch.setenv("DATABASE_URL", db_url)
-    reload_settings()
+    settings = reload_settings()
 
     db = Database(db_url)
     pipeline = PhishGuardPipeline(
@@ -43,6 +43,18 @@ def test_phase4_e2e_scan_to_dashboard(monkeypatch, tmp_path: Path) -> None:
 
     app = create_app()
     client = app.test_client()
+    # Protected routes must redirect to login before auth.
+    assert client.get("/").status_code in {302, 303}
+
+    login_response = client.post(
+        "/login",
+        data={
+            "username": settings.dashboard_username,
+            "password": settings.dashboard_password,
+        },
+        follow_redirects=False,
+    )
+    assert login_response.status_code in {302, 303}
 
     assert client.get("/").status_code == 200
     assert client.get("/emails").status_code == 200
@@ -53,7 +65,10 @@ def test_phase4_e2e_scan_to_dashboard(monkeypatch, tmp_path: Path) -> None:
 
 def test_settings_update_changes_env_file(monkeypatch, tmp_path: Path) -> None:
     env_path = tmp_path / "phase4.env"
-    env_path.write_text("PHISHING_THRESHOLD=0.75\nSCAN_INTERVAL_MINUTES=5\n", encoding="utf-8")
+    env_path.write_text(
+        "PHISHING_THRESHOLD=0.75\nSCAN_INTERVAL_MINUTES=5\nDASHBOARD_USERNAME=admin\nDASHBOARD_PASSWORD=admin12345\n",
+        encoding="utf-8",
+    )
     monkeypatch.setenv("PHISHGUARD_ENV_PATH", str(env_path))
 
     update_env_values({"PHISHING_THRESHOLD": "0.66", "SCAN_INTERVAL_MINUTES": "9"})
@@ -61,3 +76,21 @@ def test_settings_update_changes_env_file(monkeypatch, tmp_path: Path) -> None:
     assert "PHISHING_THRESHOLD=0.66" in content
     assert "SCAN_INTERVAL_MINUTES=9" in content
 
+
+def test_login_failure_returns_200_with_error(monkeypatch, tmp_path: Path) -> None:
+    db_path = tmp_path / "phase4-auth.sqlite3"
+    db_url = f"sqlite:///{db_path}"
+    monkeypatch.setenv("DATABASE_URL", db_url)
+    monkeypatch.setenv("DASHBOARD_USERNAME", "guard")
+    monkeypatch.setenv("DASHBOARD_PASSWORD", "secret123")
+    reload_settings()
+
+    app = create_app()
+    client = app.test_client()
+    response = client.post(
+        "/login",
+        data={"username": "guard", "password": "wrong-password"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert "Логин немесе құпиясөз қате.".encode("utf-8") in response.data

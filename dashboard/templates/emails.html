@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="panel">
-  <h2>Scanned emails</h2>
+  <h2>Сканерленген хаттар</h2>
   <table>
     <thead>
       <tr>
-        <th>Scanned at</th>
-        <th>Sender</th>
-        <th>Subject</th>
-        <th>Risk</th>
-        <th>Probability</th>
+        <th>Скан уақыты</th>
+        <th>Жіберуші</th>
+        <th>Тақырып</th>
+        <th>Қауіп деңгейі</th>
+        <th>Ықтималдық</th>
         <th>SPF</th>
         <th>DKIM</th>
       </tr>
@@ -20,10 +20,14 @@
         <td>{{ row.scanned_at }}</td>
         <td>{{ row.sender }}</td>
         <td>{{ row.subject }}</td>
-        <td>{{ row.risk_level }}</td>
+        <td>{{ "ЖОҒАРЫ" if row.risk_level == "HIGH" else ("ОРТАША" if row.risk_level == "MEDIUM" else "ТӨМЕН") }}</td>
         <td>{{ "%.2f"|format(row.phishing_probability) }}</td>
         <td>{{ row.spf_status }}</td>
         <td>{{ row.dkim_status }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="7">Хаттар табылмады.</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -31,13 +35,12 @@
 
   <div class="pagination">
     {% if page > 1 %}
-      <a href="{{ url_for('emails', page=page-1) }}">Previous</a>
+      <a href="{{ url_for('emails', page=page-1) }}">Артқа</a>
     {% endif %}
-    <span>Page {{ page }} / {{ total_pages }}</span>
+    <span>Бет {{ page }} / {{ total_pages }}</span>
     {% if page < total_pages %}
-      <a href="{{ url_for('emails', page=page+1) }}">Next</a>
+      <a href="{{ url_for('emails', page=page+1) }}">Келесі</a>
     {% endif %}
   </div>
 </section>
 {% endblock %}
-

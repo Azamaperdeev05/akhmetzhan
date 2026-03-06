@@ -1,34 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
+<section class="hero">
+  <h2>Корпоративтік хаттарды қауіп тұрғысынан бақылау</h2>
+  <p>Фишинг қаупін автоматты талдап, шешім қабылдауды жеделдететін басқару панелі.</p>
+</section>
+
 <section class="cards">
   <article class="card">
-    <h3>Total scans</h3>
+    <h3>Барлық скан саны</h3>
     <p>{{ summary.total_scans }}</p>
   </article>
   <article class="card">
-    <h3>Phishing detected</h3>
+    <h3>Анықталған фишинг</h3>
     <p>{{ summary.phishing_count }}</p>
   </article>
   <article class="card">
-    <h3>Last {{ summary.window_days }} days</h3>
+    <h3>Соңғы {{ summary.window_days }} күн</h3>
     <p>{{ summary.recent_phishing }}/{{ summary.recent_total }}</p>
   </article>
   <article class="card">
-    <h3>Phishing ratio</h3>
+    <h3>Фишинг үлесі</h3>
     <p>{{ "%.1f"|format(summary.phishing_ratio * 100) }}%</p>
   </article>
 </section>
 
 <section class="panel">
-  <h2>Recent scans</h2>
+  <h2>Соңғы скан нәтижелері</h2>
   <table>
     <thead>
       <tr>
-        <th>Time</th>
-        <th>Sender</th>
-        <th>Subject</th>
-        <th>Probability</th>
-        <th>Label</th>
+        <th>Уақыты</th>
+        <th>Жіберуші</th>
+        <th>Тақырып</th>
+        <th>Ықтималдық</th>
+        <th>Белгі</th>
       </tr>
     </thead>
     <tbody>
@@ -39,12 +44,15 @@
         <td>{{ row.subject }}</td>
         <td>{{ "%.2f"|format(row.phishing_probability) }}</td>
         <td>
-          <span class="badge {{ row.label|lower }}">{{ row.label }}</span>
+          <span class="badge {{ row.label|lower }}">{{ "ФИШИНГ" if row.label == "PHISHING" else "ҚАУІПСІЗ" }}</span>
         </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5">Әзірге дерек жоқ. Сканерді бір рет іске қосыңыз.</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </section>
 {% endblock %}
-
