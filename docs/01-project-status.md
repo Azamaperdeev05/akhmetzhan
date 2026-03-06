@@ -54,6 +54,12 @@
   - label apply fail кезінде scan cycle үзілмейді (`main.py`)
   - phase3 runtime тесттері (`tests/test_phase3_gmail_runtime.py`)
   - real inbox 20+ хат валидация скрипті (`scripts/run_phase3_gmail_validation.py`)
+- Real OAuth расталды:
+  - `token.json` жасалды (refresh token бар)
+  - `scripts/run_phase3_gmail_validation.py` real inbox run нәтижесі:
+    - `scanned_total=82`
+    - `target_reached=true`
+    - дәлел файлы: `reports/phase3_real_validation_2026-03-06.json`
 
 ## Фаза 4: Dashboard + E2E
 
@@ -94,6 +100,7 @@
 - Dashboard endpoints -> `200 OK`.
 - Phase 2 smoke script -> `processed_emails=2`, `phishing_detected=1`, DB summary generated.
 - Phase 3 runtime tests -> retry/pagination/label-failure сценарийлері passed.
+- Phase 3 real inbox validation -> `target_count=20` критериі орындалды (`scanned_total=82`).
 - Phase 4 tests -> scan->db->dashboard routes және settings env update passed.
 - Phase 5 quality gate and defense report generation -> passed.
 

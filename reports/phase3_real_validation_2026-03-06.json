@@ -1,0 +1,14 @@
+{
+  "validated_at_local": "2026-03-06",
+  "account": "azamaperdeev05@gmail.com",
+  "query": "in:inbox",
+  "target_count": 20,
+  "cycles_run": 1,
+  "max_results": 100,
+  "scanned_total": 82,
+  "phishing_total": 0,
+  "target_reached": true,
+  "database_url": "sqlite:///phishguard.db",
+  "notes": "OAuth successful, token.json created, real inbox processing validated."
+}
+

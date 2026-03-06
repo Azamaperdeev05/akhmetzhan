@@ -52,6 +52,10 @@ Phase 5 quality/report артефакттары (орны: `reports/`):
 - `phase5_defense_summary.json`
 - `phase5_metrics_table.csv`
 
+Phase 3 real Gmail validation артефакты:
+
+- `phase3_real_validation_2026-03-06.json` (`scanned_total=82`, `target_reached=true`)
+
 ## Қазіргі алынған мәндер туралы ескерту
 
 - Ағымдағы run шағын demo split-пен жүргізілген.
