@@ -9,6 +9,7 @@ from flask import Flask, jsonify, redirect, render_template, request, session, u
 from werkzeug.security import check_password_hash
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DASHBOARD_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -40,8 +41,8 @@ def create_app() -> Flask:
     settings = get_settings()
     app = Flask(
         __name__,
-        template_folder="templates",
-        static_folder="static",
+        template_folder=str(DASHBOARD_ROOT / "templates"),
+        static_folder=str(DASHBOARD_ROOT / "static"),
     )
     app.config["SECRET_KEY"] = settings.flask_secret_key
     db = Database(settings.database_url)
