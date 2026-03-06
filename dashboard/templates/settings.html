@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel">
+  <h2>Runtime Settings</h2>
+  <p>These values are stored in <code>.env</code> and used by scanner runs.</p>
+
+  {% if saved %}
+    <p class="status-ok">Settings saved successfully.</p>
+  {% endif %}
+  {% if error %}
+    <p class="status-error">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" class="settings-form">
+    <label for="phishing_threshold">PHISHING_THRESHOLD (0..1)</label>
+    <input
+      id="phishing_threshold"
+      name="phishing_threshold"
+      type="number"
+      min="0.01"
+      max="0.99"
+      step="0.01"
+      value="{{ settings.phishing_threshold }}"
+      required
+    />
+
+    <label for="scan_interval_minutes">SCAN_INTERVAL_MINUTES (1..1440)</label>
+    <input
+      id="scan_interval_minutes"
+      name="scan_interval_minutes"
+      type="number"
+      min="1"
+      max="1440"
+      step="1"
+      value="{{ settings.scan_interval_minutes }}"
+      required
+    />
+
+    <button type="submit">Save</button>
+  </form>
+</section>
+{% endblock %}
+

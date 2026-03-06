@@ -139,3 +139,26 @@ python scripts/run_phase3_gmail_validation.py --target-count 20 --max-cycles 10 
 - `scanned_total`
 - `phishing_total`
 - `target_reached`
+
+## 11. Phase 4 E2E demo (Scan -> DB -> Dashboard)
+
+```bash
+python scripts/run_phase4_e2e_demo.py --db-url sqlite:///phase4_demo.db
+```
+
+JSON нәтижесінде:
+
+- `emails_scanned`
+- `phishing_detected`
+- `dashboard_statuses`
+- `all_dashboard_endpoints_ok`
+
+## 12. Runtime threshold/interval баптау (MVP)
+
+Dashboard арқылы:
+
+- `http://localhost:5000/settings`
+- `PHISHING_THRESHOLD`
+- `SCAN_INTERVAL_MINUTES`
+
+Бұл мәндер `.env` файлына жазылады.

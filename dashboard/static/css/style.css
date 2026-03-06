@@ -97,6 +97,39 @@ td {
   margin-top: 12px;
 }
 
+.settings-form {
+  display: grid;
+  gap: 10px;
+  max-width: 420px;
+}
+
+.settings-form input {
+  padding: 8px 10px;
+  border: 1px solid #c8d5e6;
+  border-radius: 8px;
+}
+
+.settings-form button {
+  width: 140px;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #1f6de0;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.status-ok {
+  color: #0f7a3f;
+  font-weight: 600;
+}
+
+.status-error {
+  color: #b21600;
+  font-weight: 600;
+}
+
 @media (max-width: 768px) {
   th,
   td {
@@ -104,4 +137,3 @@ td {
     padding: 8px;
   }
 }
-

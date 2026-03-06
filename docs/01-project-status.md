@@ -62,8 +62,14 @@
   - `/emails`
   - `/stats`
   - `/api/stats`
+- Runtime баптау беті қосылды:
+  - `/settings` (`PHISHING_THRESHOLD`, `SCAN_INTERVAL_MINUTES`)
 - Template + static assets жасалды.
 - Main scanner DB-ға жазады, dashboard DB-дан оқиды.
+- Phase 4 E2E demo script қосылды:
+  - `scripts/run_phase4_e2e_demo.py`
+- Phase 4 тесттері қосылды:
+  - `tests/test_phase4_dashboard_e2e.py`
 
 ## Фаза 5: Сапа және қорғау дайындығы
 
@@ -80,6 +86,7 @@
 - Dashboard endpoints -> `200 OK`.
 - Phase 2 smoke script -> `processed_emails=2`, `phishing_detected=1`, DB summary generated.
 - Phase 3 runtime tests -> retry/pagination/label-failure сценарийлері passed.
+- Phase 4 tests -> scan->db->dashboard routes және settings env update passed.
 
 ## Ескерту (ғылыми метрика туралы)
 

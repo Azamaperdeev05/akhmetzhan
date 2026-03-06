@@ -8,7 +8,16 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-load_dotenv(PROJECT_ROOT / ".env")
+
+
+def get_env_path() -> Path:
+    configured = os.getenv("PHISHGUARD_ENV_PATH", "").strip()
+    if configured:
+        return Path(configured).expanduser().resolve()
+    return PROJECT_ROOT / ".env"
+
+
+load_dotenv(get_env_path())
 
 
 def _as_int(value: str | None, default: int) -> int:
@@ -68,3 +77,45 @@ def get_settings() -> Settings:
         scan_timeout_seconds=_as_int(os.getenv("SCAN_TIMEOUT_SECONDS"), 10),
     )
 
+
+def reload_settings() -> Settings:
+    get_settings.cache_clear()
+    return get_settings()
+
+
+def update_env_values(updates: dict[str, str], env_path: Path | None = None) -> Path:
+    target = env_path or get_env_path()
+    target.parent.mkdir(parents=True, exist_ok=True)
+
+    if target.exists():
+        lines = target.read_text(encoding="utf-8").splitlines()
+    else:
+        lines = []
+
+    normalized = {key: str(value) for key, value in updates.items()}
+    seen: set[str] = set()
+    output: list[str] = []
+
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in line:
+            output.append(line)
+            continue
+
+        key, _value = line.split("=", 1)
+        key = key.strip()
+        if key in normalized:
+            output.append(f"{key}={normalized[key]}")
+            seen.add(key)
+        else:
+            output.append(line)
+
+    for key, value in normalized.items():
+        if key not in seen:
+            output.append(f"{key}={value}")
+
+    target.write_text("\n".join(output).rstrip() + "\n", encoding="utf-8")
+    for key, value in normalized.items():
+        os.environ[key] = value
+    reload_settings()
+    return target

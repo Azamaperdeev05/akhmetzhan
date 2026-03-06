@@ -6,8 +6,8 @@ htmlcov/
 *.db
 .env
 token.json
+credentials.json
 model/saved_model/*
 !model/saved_model/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
-

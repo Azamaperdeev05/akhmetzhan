@@ -3,13 +3,13 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from utils.config import get_settings
+from utils.config import get_settings, update_env_values
 from utils.database import Database
 
 
@@ -55,6 +55,58 @@ def create_app() -> Flask:
         summary = db.get_summary(days=30)
         daily = db.get_daily_stats(days=30)
         return jsonify({"summary": summary, "daily": daily})
+
+    @app.route("/settings", methods=["GET", "POST"])
+    def settings_page():
+        if request.method == "POST":
+            threshold_raw = (request.form.get("phishing_threshold") or "").strip()
+            interval_raw = (request.form.get("scan_interval_minutes") or "").strip()
+
+            try:
+                threshold = float(threshold_raw)
+                if not 0.0 < threshold < 1.0:
+                    raise ValueError
+            except ValueError:
+                return (
+                    render_template(
+                        "settings.html",
+                        settings=get_settings(),
+                        saved=False,
+                        error="PHISHING_THRESHOLD must be between 0 and 1.",
+                    ),
+                    400,
+                )
+
+            try:
+                interval = int(interval_raw)
+                if not 1 <= interval <= 1440:
+                    raise ValueError
+            except ValueError:
+                return (
+                    render_template(
+                        "settings.html",
+                        settings=get_settings(),
+                        saved=False,
+                        error="SCAN_INTERVAL_MINUTES must be between 1 and 1440.",
+                    ),
+                    400,
+                )
+
+            update_env_values(
+                {
+                    "PHISHING_THRESHOLD": str(threshold),
+                    "SCAN_INTERVAL_MINUTES": str(interval),
+                }
+            )
+            return redirect(url_for("settings_page", saved="1"))
+
+        saved = request.args.get("saved") == "1"
+        return render_template(
+            "settings.html",
+            settings=get_settings(),
+            saved=saved,
+            error="",
+        )
 
     return app
 
