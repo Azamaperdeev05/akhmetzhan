@@ -5,7 +5,7 @@ import sys
 from functools import wraps
 from pathlib import Path
 
-from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash
 
 
@@ -26,6 +26,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from utils.config import get_settings, update_env_values
 from utils.database import Database
+from dashboard.scanner_service import DashboardScannerService
 
 
 def _verify_password(stored_password: str, provided_password: str) -> bool:
@@ -57,6 +58,8 @@ def create_app() -> Flask:
     )
     app.config["SECRET_KEY"] = settings.flask_secret_key
     db = Database(settings.database_url)
+    scanner = DashboardScannerService()
+    app.extensions["scanner"] = scanner
 
     def is_authenticated() -> bool:
         return bool(session.get("auth_ok"))
@@ -75,6 +78,8 @@ def create_app() -> Flask:
         return {
             "is_authenticated": is_authenticated(),
             "current_user": session.get("username", ""),
+            "auto_scan_enabled": scanner.is_auto_enabled(),
+            "last_scan_status": scanner.get_last_status(),
         }
 
     @app.route("/login", methods=["GET", "POST"])
@@ -110,7 +115,44 @@ def create_app() -> Flask:
     def index():
         summary = db.get_summary(days=30)
         recent = db.list_recent_results(limit=10)
-        return render_template("index.html", summary=summary, recent=recent)
+        return render_template(
+            "index.html",
+            summary=summary,
+            recent=recent,
+            scan_status=scanner.get_last_status(),
+            auto_scan_enabled=scanner.is_auto_enabled(),
+        )
+
+    @app.route("/scan/run", methods=["POST"])
+    @login_required
+    def run_scan_now():
+        try:
+            result = scanner.run_scan_cycle(trigger="manual")
+            source_label = "Gmail" if result.get("source") == "gmail" else "Sample"
+            flash(
+                (
+                    "Сканерлеу аяқталды. "
+                    f"Тексерілді: {result.get('scanned', 0)}, "
+                    f"фишинг: {result.get('phishing', 0)}, "
+                    f"дерек көзі: {source_label}."
+                ),
+                "success",
+            )
+        except Exception as exc:
+            flash(f"Сканерлеу кезінде қате шықты: {exc}", "error")
+        return redirect(url_for("index"))
+
+    @app.route("/scan/auto", methods=["POST"])
+    @login_required
+    def toggle_auto_scan():
+        enabled = (request.form.get("enabled") or "").strip() == "1"
+        update_env_values({"AUTO_SCAN_ENABLED": "1" if enabled else "0"})
+        scanner.set_auto_enabled(enabled)
+        if enabled:
+            flash("Авто-сканер қосылды.", "success")
+        else:
+            flash("Авто-сканер өшірілді.", "info")
+        return redirect(url_for("index"))
 
     @app.route("/emails")
     @login_required

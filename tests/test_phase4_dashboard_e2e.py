@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from analyzer.pipeline import PhishGuardPipeline
+import dashboard.app as dashboard_app_module
 from dashboard.app import create_app
 from gmail.fetch_emails import load_sample_emails
 from utils.config import reload_settings, update_env_values
@@ -94,3 +95,60 @@ def test_login_failure_returns_200_with_error(monkeypatch, tmp_path: Path) -> No
     )
     assert response.status_code == 200
     assert "Логин немесе құпиясөз қате.".encode("utf-8") in response.data
+
+
+def test_scan_routes_work_with_authenticated_user(monkeypatch, tmp_path: Path) -> None:
+    env_path = tmp_path / "phase4-scan.env"
+    env_path.write_text(
+        (
+            "DATABASE_URL=sqlite:///phase4-scan.sqlite3\n"
+            "PHISHING_THRESHOLD=0.75\n"
+            "SCAN_INTERVAL_MINUTES=5\n"
+            "DASHBOARD_USERNAME=admin\n"
+            "DASHBOARD_PASSWORD=admin12345\n"
+            "AUTO_SCAN_ENABLED=0\n"
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("PHISHGUARD_ENV_PATH", str(env_path))
+
+    db_path = tmp_path / "phase4-scan.sqlite3"
+    db_url = f"sqlite:///{db_path}"
+    monkeypatch.setenv("DATABASE_URL", db_url)
+    settings = reload_settings()
+
+    class DummyScanner:
+        def __init__(self) -> None:
+            self._auto = False
+
+        def is_auto_enabled(self) -> bool:
+            return self._auto
+
+        def get_last_status(self) -> dict[str, object]:
+            return {"timestamp": "", "scanned": 0, "phishing": 0, "source": "n/a", "trigger": "none", "error": ""}
+
+        def run_scan_cycle(self, trigger: str = "manual") -> dict[str, object]:
+            return {"scanned": 3, "phishing": 1, "source": "sample"}
+
+        def set_auto_enabled(self, enabled: bool) -> None:
+            self._auto = enabled
+
+    monkeypatch.setattr(dashboard_app_module, "DashboardScannerService", DummyScanner)
+    app = create_app()
+    client = app.test_client()
+
+    login_response = client.post(
+        "/login",
+        data={
+            "username": settings.dashboard_username,
+            "password": settings.dashboard_password,
+        },
+        follow_redirects=False,
+    )
+    assert login_response.status_code in {302, 303}
+
+    run_response = client.post("/scan/run", follow_redirects=False)
+    assert run_response.status_code in {302, 303}
+
+    auto_response = client.post("/scan/auto", data={"enabled": "1"}, follow_redirects=False)
+    assert auto_response.status_code in {302, 303}

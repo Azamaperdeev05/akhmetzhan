@@ -277,6 +277,7 @@ FLASK_SECRET_KEY=your_secret_key
 DATABASE_URL=sqlite:///phishguard.db
 SCAN_INTERVAL_MINUTES=5
 PHISHING_THRESHOLD=0.75
+AUTO_SCAN_ENABLED=0
 ```
 
 ### 5. Gmail API баптау
@@ -380,6 +381,8 @@ BERT Tokenizer + Model
 - 🔴 **Қауіп деңгейі** — HIGH / MEDIUM / LOW индикаторлары
 - 📅 **Тарих** — соңғы 30 күндік статистика графигі
 - ⚙️ **Баптаулар** — сканерлеу жиілігі, шектік мән параметрлері
+- ▶️ **Қазір сканерлеу** — dashboard ішінен бір реттік скан бастау
+- 🔁 **Авто-сканер тумблері** — автоматты сканерлеуді қосу/өшіру
 
 ---
 

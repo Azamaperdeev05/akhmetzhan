@@ -5,6 +5,41 @@
   <p>Фишинг қаупін автоматты талдап, шешім қабылдауды жеделдететін басқару панелі.</p>
 </section>
 
+<section class="panel scanner-panel">
+  <div class="scanner-head">
+    <h2>Сканер басқаруы</h2>
+    <span class="badge {{ 'legitimate' if auto_scan_enabled else 'phishing' }}">
+      {{ "АВТО: ҚОСУЛЫ" if auto_scan_enabled else "АВТО: ӨШІРУЛІ" }}
+    </span>
+  </div>
+  <div class="scanner-actions">
+    <form method="post" action="{{ url_for('run_scan_now') }}">
+      <button type="submit" class="action-btn">Қазір сканерлеу</button>
+    </form>
+    <form method="post" action="{{ url_for('toggle_auto_scan') }}">
+      <input type="hidden" name="enabled" value="{{ '0' if auto_scan_enabled else '1' }}" />
+      <button type="submit" class="action-btn alt">
+        {{ "Авто-сканерді өшіру" if auto_scan_enabled else "Авто-сканерді қосу" }}
+      </button>
+    </form>
+  </div>
+  <p class="scanner-note">
+    Соңғы статус:
+    {% if scan_status.timestamp %}
+      {{ scan_status.timestamp }} |
+      mode={{ scan_status.trigger }} |
+      source={{ scan_status.source }} |
+      scanned={{ scan_status.scanned }} |
+      phishing={{ scan_status.phishing }}
+      {% if scan_status.error %}
+        | ескерту={{ scan_status.error }}
+      {% endif %}
+    {% else %}
+      Әлі скан жүрмеді.
+    {% endif %}
+  </p>
+</section>
+
 <section class="cards">
   <article class="card">
     <h3>Барлық скан саны</h3>

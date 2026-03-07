@@ -165,6 +165,38 @@ body {
   padding-top: 22px;
 }
 
+.flash-stack {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.flash {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line-soft);
+  padding: 10px 12px;
+  font-size: 13px;
+  backdrop-filter: blur(8px);
+}
+
+.flash-success {
+  color: #c3ffe5;
+  border-color: rgba(64, 224, 159, 0.5);
+  background: rgba(64, 224, 159, 0.12);
+}
+
+.flash-error {
+  color: #ffd2d7;
+  border-color: rgba(255, 108, 121, 0.55);
+  background: rgba(255, 108, 121, 0.16);
+}
+
+.flash-info {
+  color: #d6ecff;
+  border-color: rgba(36, 197, 255, 0.5);
+  background: rgba(36, 197, 255, 0.12);
+}
+
 .hero {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -244,6 +276,50 @@ body {
 .panel h2 {
   margin: 0 0 12px;
   font-family: "Exo 2", sans-serif;
+}
+
+.scanner-panel {
+  margin-bottom: 16px;
+}
+
+.scanner-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.scanner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-weight: 700;
+  color: #041428;
+  background: linear-gradient(130deg, var(--accent), var(--accent-alt));
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.action-btn.alt {
+  background: linear-gradient(130deg, #8cb7ff, #6fead3);
+}
+
+.scanner-note {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 table {
@@ -447,6 +523,11 @@ tbody tr:hover {
     font-size: 28px;
   }
 
+  .scanner-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   th,
   td {
     font-size: 12px;
@@ -461,4 +542,3 @@ tbody tr:hover {
     font-size: 24px;
   }
 }
-

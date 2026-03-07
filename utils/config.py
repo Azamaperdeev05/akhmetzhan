@@ -32,6 +32,12 @@ def _as_float(value: str | None, default: float) -> float:
     return float(value)
 
 
+def _as_bool(value: str | None, default: bool) -> bool:
+    if value is None or value.strip() == "":
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class Settings:
     project_root: Path
@@ -53,6 +59,7 @@ class Settings:
     processed_data_dir: Path
     model_dir: Path
     scan_timeout_seconds: int
+    auto_scan_enabled: bool
 
 
 @lru_cache(maxsize=1)
@@ -79,6 +86,7 @@ def get_settings() -> Settings:
         / os.getenv("PROCESSED_DATA_DIR", "data/processed"),
         model_dir=PROJECT_ROOT / os.getenv("MODEL_DIR", "model/saved_model"),
         scan_timeout_seconds=_as_int(os.getenv("SCAN_TIMEOUT_SECONDS"), 10),
+        auto_scan_enabled=_as_bool(os.getenv("AUTO_SCAN_ENABLED"), False),
     )
 
 
