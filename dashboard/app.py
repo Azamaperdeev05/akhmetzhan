@@ -8,8 +8,19 @@ from pathlib import Path
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DASHBOARD_ROOT = Path(__file__).resolve().parent
+
+def _strip_windows_extended_prefix(path: str) -> str:
+    # Flask/Jinja template loader may fail with Windows extended paths (\\?\...).
+    if path.startswith("\\\\?\\UNC\\"):
+        return f"\\\\{path[8:]}"
+    if path.startswith("\\\\?\\"):
+        return path[4:]
+    return path
+
+
+APP_FILE = Path(_strip_windows_extended_prefix(str(Path(__file__).resolve())))
+PROJECT_ROOT = APP_FILE.parents[1]
+DASHBOARD_ROOT = APP_FILE.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
