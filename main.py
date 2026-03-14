@@ -19,6 +19,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--once", action="store_true", help="Run one scan cycle and exit.")
     parser.add_argument("--max-results", type=int, default=None, help="Override max inbox messages per cycle.")
     parser.add_argument(
+        "--allow-sample-fallback",
+        action="store_true",
+        help="Allow offline sample inbox fallback when Gmail API is unavailable.",
+    )
+    parser.add_argument(
         "--offline-samples",
         type=Path,
         default=Path("data/raw/sample_inbox.json"),
@@ -88,6 +93,7 @@ def scan_once(
     max_results: int,
     seen_ids: set[str],
     sample_path: Path,
+    allow_sample_fallback: bool = False,
 ) -> tuple[int, int]:
     run_id = db.start_scan_run()
     scanned_count = 0
@@ -95,6 +101,11 @@ def scan_once(
     label_failure_count = 0
 
     if service is None:
+        if not allow_sample_fallback:
+            raise RuntimeError(
+                "Gmail service unavailable and sample fallback is disabled. "
+                "Configure Gmail credentials or enable ALLOW_SAMPLE_FALLBACK=1."
+            )
         logger.warning("gmail_service=unavailable using_sample_emails=%s", sample_path)
         emails = load_sample_emails(sample_path)
     else:
@@ -114,7 +125,10 @@ def scan_once(
             continue
 
         result = pipeline.scan_email(email)
-        db.save_scan_result(email=email, result=result, run_id=run_id)
+        _scan_id, created = db.save_scan_result_if_new(email=email, result=result, run_id=run_id)
+        if not created:
+            logger.info("scan_result_skipped_duplicate message_id=%s", email.message_id)
+            continue
         scanned_count += 1
 
         if result.phishing_probability > settings.phishing_threshold:
@@ -176,6 +190,7 @@ def main() -> None:
         expand_short_urls=False,
     )
     max_results = args.max_results or settings.max_results_per_scan
+    allow_sample_fallback = bool(settings.allow_sample_fallback or args.allow_sample_fallback)
     seen_ids: set[str] = set()
 
     try:
@@ -199,6 +214,7 @@ def main() -> None:
                 max_results=max_results,
                 seen_ids=seen_ids,
                 sample_path=args.offline_samples,
+                allow_sample_fallback=allow_sample_fallback,
             )
             logger.info("scan_cycle_done scanned=%s phishing=%s", scanned, phishing)
         except KeyboardInterrupt:

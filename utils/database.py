@@ -13,10 +13,12 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    UniqueConstraint,
     case,
     create_engine,
     func,
 )
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship, sessionmaker
 
 from utils.schemas import EmailMessage, ScanResult, URLFinding
@@ -70,6 +72,7 @@ class ScanRunRecord(Base):
 
 class ScanResultRecord(Base):
     __tablename__ = "scan_results"
+    __table_args__ = (UniqueConstraint("email_id", name="uq_scan_results_email_id"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     email_id: Mapped[int] = mapped_column(ForeignKey("emails.id"), index=True)
@@ -105,15 +108,22 @@ class URLFindingRecord(Base):
     scan_result: Mapped["ScanResultRecord"] = relationship("ScanResultRecord", back_populates="url_findings")
 
 
+def should_auto_create_schema(database_url: str) -> bool:
+    return database_url.startswith("sqlite")
+
+
 class Database:
-    def __init__(self, database_url: str) -> None:
+    def __init__(self, database_url: str, auto_create_schema: bool | None = None) -> None:
         connect_args: dict[str, bool] = {}
         if database_url.startswith("sqlite"):
             connect_args["check_same_thread"] = False
 
         self._engine = create_engine(database_url, future=True, connect_args=connect_args)
         self._session_factory = sessionmaker(bind=self._engine, expire_on_commit=False, future=True)
-        Base.metadata.create_all(self._engine)
+        if auto_create_schema is None:
+            auto_create_schema = should_auto_create_schema(database_url)
+        if auto_create_schema:
+            Base.metadata.create_all(self._engine)
 
     @contextmanager
     def session_scope(self) -> Iterator[Session]:
@@ -175,10 +185,36 @@ class Database:
         record.raw_headers = json.dumps(email.headers, ensure_ascii=True)
         return record
 
-    def save_scan_result(self, email: EmailMessage, result: ScanResult, run_id: int | None = None) -> int:
-        with self.session_scope() as session:
+    def _find_scan_result_id_by_message_id(self, session: Session, message_id: str) -> int | None:
+        existing_id = (
+            session.query(ScanResultRecord.id)
+            .join(EmailRecord, ScanResultRecord.email_id == EmailRecord.id)
+            .filter(EmailRecord.message_id == message_id)
+            .limit(1)
+            .scalar()
+        )
+        return int(existing_id) if existing_id is not None else None
+
+    def save_scan_result_if_new(
+        self,
+        email: EmailMessage,
+        result: ScanResult,
+        run_id: int | None = None,
+    ) -> tuple[int, bool]:
+        session = self._session_factory()
+        try:
             email_record = self._upsert_email(session, email)
             session.flush()
+
+            existing_id = (
+                session.query(ScanResultRecord.id)
+                .filter_by(email_id=email_record.id)
+                .limit(1)
+                .scalar()
+            )
+            if existing_id is not None:
+                session.commit()
+                return int(existing_id), False
 
             scan_row = ScanResultRecord(
                 email_id=email_record.id,
@@ -207,7 +243,23 @@ class Database:
                     )
                 )
 
-            return scan_row.id
+            session.commit()
+            return scan_row.id, True
+        except IntegrityError:
+            session.rollback()
+            existing_id = self._find_scan_result_id_by_message_id(session, email.message_id)
+            if existing_id is not None:
+                return existing_id, False
+            raise
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
+    def save_scan_result(self, email: EmailMessage, result: ScanResult, run_id: int | None = None) -> int:
+        scan_id, _created = self.save_scan_result_if_new(email=email, result=result, run_id=run_id)
+        return scan_id
 
     def _url_payload(self, finding: URLFinding | dict[str, str]) -> URLFinding:
         if isinstance(finding, URLFinding):

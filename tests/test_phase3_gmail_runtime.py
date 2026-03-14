@@ -18,6 +18,7 @@ class DummySettings:
     phishing_threshold = 0.75
     gmail_query = "in:inbox"
     gmail_label_name = "PHISHING"
+    allow_sample_fallback = False
 
 
 class FixedPredictor:
@@ -126,6 +127,7 @@ def test_scan_once_continues_when_label_apply_fails(monkeypatch, tmp_path: Path)
         max_results=20,
         seen_ids=set(),
         sample_path=Path("data/raw/sample_inbox.json"),
+        allow_sample_fallback=False,
     )
 
     assert scanned == 1
@@ -137,3 +139,44 @@ def test_scan_once_continues_when_label_apply_fails(monkeypatch, tmp_path: Path)
         assert run is not None
         assert "label_failures=1" in (run.notes or "")
 
+
+def test_scan_once_requires_explicit_sample_fallback(tmp_path: Path) -> None:
+    db = Database(f"sqlite:///{tmp_path / 'phase3-fallback.sqlite3'}")
+    predictor = FixedPredictor(0.95)
+    pipeline = PhishGuardPipeline(predictor=predictor, threshold=0.75, expand_short_urls=False)
+    logger = logging.getLogger("phase3.fallback")
+
+    with pytest.raises(RuntimeError):
+        main_module.scan_once(
+            db=db,
+            pipeline=pipeline,
+            logger=logger,
+            settings=DummySettings(),
+            service=None,
+            max_results=20,
+            seen_ids=set(),
+            sample_path=Path("data/raw/sample_inbox.json"),
+            allow_sample_fallback=False,
+        )
+
+
+def test_scan_once_can_use_sample_fallback_when_enabled(tmp_path: Path) -> None:
+    db = Database(f"sqlite:///{tmp_path / 'phase3-fallback-enabled.sqlite3'}")
+    predictor = FixedPredictor(0.10)
+    pipeline = PhishGuardPipeline(predictor=predictor, threshold=0.75, expand_short_urls=False)
+    logger = logging.getLogger("phase3.fallback.enabled")
+
+    scanned, phishing = main_module.scan_once(
+        db=db,
+        pipeline=pipeline,
+        logger=logger,
+        settings=DummySettings(),
+        service=None,
+        max_results=20,
+        seen_ids=set(),
+        sample_path=Path("data/raw/sample_inbox.json"),
+        allow_sample_fallback=True,
+    )
+
+    assert scanned >= 1
+    assert phishing == 0

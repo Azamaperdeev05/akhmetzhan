@@ -24,6 +24,10 @@
    Phase 5 финал сапа есебі және қорғау сценариі.
 10. [10-defense-presentation-script.md](10-defense-presentation-script.md)  
    5-7 минуттық қорғау сөзі, live demo реті, және Q&A шпаргалка.
+11. [11-postgresql-migration.md](11-postgresql-migration.md)  
+   PostgreSQL migration, Alembic және schema versioning.
+12. [12-complete-run-guide.md](12-complete-run-guide.md)  
+   Бағдарламаны толық іске қосу нұсқаулығы, PowerShell қадамдары, Gmail, DB, dashboard.
 
 ## Жылдам бастау
 

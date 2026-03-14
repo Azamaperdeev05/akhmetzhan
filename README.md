@@ -116,6 +116,7 @@ phishguard/
 - [docs/06-troubleshooting.md](docs/06-troubleshooting.md) — қателерді түзету нұсқаулығы
 - [docs/07-git-guide.md](docs/07-git-guide.md) — Git workflow
 - [docs/08-diploma-deliverables.md](docs/08-diploma-deliverables.md) — қорғау чеклисті
+- [docs/12-complete-run-guide.md](docs/12-complete-run-guide.md) — бағдарламаны толық іске қосу нұсқаулығы
 
 ---
 
@@ -141,7 +142,8 @@ phishguard/
 | Кітапхана | Мақсаты |
 |-----------|---------|
 | `Flask` | Веб-dashboard |
-| `SQLAlchemy` | ORM, SQLite |
+| `SQLAlchemy` | ORM, SQLite/PostgreSQL |
+| `Alembic` | ДҚ migration басқару |
 | `Chart.js` | Визуализация (frontend) |
 
 ### 🔧 Утилиттер
@@ -278,7 +280,30 @@ DATABASE_URL=sqlite:///phishguard.db
 SCAN_INTERVAL_MINUTES=5
 PHISHING_THRESHOLD=0.75
 AUTO_SCAN_ENABLED=0
+ALLOW_SAMPLE_FALLBACK=0
 ```
+
+PostgreSQL үлгісі:
+
+```env
+DATABASE_URL=postgresql+psycopg://phishguard:phishguard@localhost:5432/phishguard
+```
+
+### 4.1. Деректер базасының migration-ы
+
+SQLite local demo үшін автоматты түрде жасалады. PostgreSQL үшін migration жүргізіңіз:
+
+```bash
+python scripts/db_upgrade.py
+```
+
+Немесе:
+
+```bash
+alembic upgrade head
+```
+
+Егер бұрынғы `SQLite` база (`phishguard.db`) legacy schema-мен бар болса, `db_upgrade.py` оны автоматты түрде backup жасап, жаңа schema-ға көшіреді.
 
 ### 5. Gmail API баптау
 
@@ -311,6 +336,14 @@ python dashboard/app.py
 ```
 
 Dashboard: `http://localhost:5000`
+
+Ескерту: PostgreSQL қолдансаңыз, dashboard не scanner-ді қоспай тұрып migration-ды жүргізіңіз.
+
+Sample fallback енді әдепкіде өшірулі. Demo/offline режим керек болса:
+
+```env
+ALLOW_SAMPLE_FALLBACK=1
+```
 
 ---
 

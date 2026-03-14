@@ -18,6 +18,33 @@ copy .env.example .env
 - `PHISHING_THRESHOLD=0.75`
 - `SCAN_INTERVAL_MINUTES=5`
 - `MODEL_DIR=model/saved_model`
+- `ALLOW_SAMPLE_FALLBACK=0`
+
+PostgreSQL үлгісі:
+
+- `DATABASE_URL=postgresql+psycopg://phishguard:phishguard@localhost:5432/phishguard`
+
+## 2.1. PostgreSQL migration
+
+PostgreSQL бос базаға automatic schema create жасалмайды. Алдымен migration орындаңыз:
+
+```bash
+python scripts/db_upgrade.py
+```
+
+Немесе:
+
+```bash
+alembic upgrade head
+```
+
+Егер репода бұрыннан жасалған legacy `SQLite` база болса, бұл команда backup жасап, оны жаңа schema-ға автоматты көшіреді.
+
+Жаңа migration шығару:
+
+```bash
+alembic revision --autogenerate -m "describe change"
+```
 
 Gmail real mode үшін:
 
@@ -25,6 +52,10 @@ Gmail real mode үшін:
 - `GMAIL_CLIENT_SECRET`
 - `GMAIL_REDIRECT_URI`
 - `credentials.json` (project root)
+
+Offline demo/sample режим үшін:
+
+- `ALLOW_SAMPLE_FALLBACK=1`
 
 ## 3. Data Pipeline
 
@@ -93,7 +124,7 @@ python main.py
 ## Offline sample арқылы test
 
 ```bash
-python main.py --once --offline-samples data/raw/sample_inbox.json
+python main.py --once --allow-sample-fallback --offline-samples data/raw/sample_inbox.json
 ```
 
 ## 7. Dashboard іске қосу

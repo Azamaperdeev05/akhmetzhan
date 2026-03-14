@@ -60,6 +60,7 @@ class Settings:
     model_dir: Path
     scan_timeout_seconds: int
     auto_scan_enabled: bool
+    allow_sample_fallback: bool
 
 
 @lru_cache(maxsize=1)
@@ -87,6 +88,7 @@ def get_settings() -> Settings:
         model_dir=PROJECT_ROOT / os.getenv("MODEL_DIR", "model/saved_model"),
         scan_timeout_seconds=_as_int(os.getenv("SCAN_TIMEOUT_SECONDS"), 10),
         auto_scan_enabled=_as_bool(os.getenv("AUTO_SCAN_ENABLED"), False),
+        allow_sample_fallback=_as_bool(os.getenv("ALLOW_SAMPLE_FALLBACK"), False),
     )
 
 

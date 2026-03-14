@@ -90,6 +90,7 @@ class DashboardScannerService:
                     max_results=settings.max_results_per_scan,
                     seen_ids=self._seen_ids,
                     sample_path=settings.project_root / "data" / "raw" / "sample_inbox.json",
+                    allow_sample_fallback=settings.allow_sample_fallback,
                 )
                 self._last_status = {
                     "ok": True,
@@ -153,4 +154,3 @@ class DashboardScannerService:
 
     def get_last_status(self) -> dict[str, object]:
         return dict(self._last_status)
-
